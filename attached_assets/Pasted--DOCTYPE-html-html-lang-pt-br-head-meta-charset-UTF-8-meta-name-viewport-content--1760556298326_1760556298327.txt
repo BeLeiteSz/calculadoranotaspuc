@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Nota Final - Vestibular</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
+    }
+    h1 {
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+      color: #222;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Consulta de Nota Final</h1>
+  <div class="container">
+    <label for="grupo">Selecione o Grupo:</label>
+    <select id="grupo" onchange="atualizarCampos()">
+      <option value="1">Grupo 1</option>
+      <option value="2">Grupo 2</option>
+      <option value="3">Grupo 3</option>
+      <option value="4">Grupo 4</option>
+    </select>
+
+    <form id="formNotas">
+      <div id="camposNotas"></div>
+      <button type="button" onclick="calcularNota()">Calcular Nota Final</button>
+    </form>
+
+    <div id="resultado"></div>
+  </div>
+
+  <script>
+    const pesos = {
+      1: { portugues: 1, ingles: 1, humanas: 1, natureza: 1, matematica: 1, redacao: 1 },
+      2: { portugues: 1, ingles: 1, humanas: 1, natureza: 1, matematica: 1, redacao: 1 },
+      3: { portugues: 1, ingles: 1, humanas: 1, natureza: 1, matematica: 1, redacao: 1 },
+      4: { portugues: 1, ingles: 1, humanas: 1, natureza: 1, biologia: 1, matematica: 1, redacao: 1 }
+    };
+    // ↑ Edite aqui os pesos de cada matéria em cada grupo ↑
+
+    function atualizarCampos() {
+      const grupo = document.getElementById("grupo").value;
+      const camposDiv = document.getElementById("camposNotas");
+      camposDiv.innerHTML = "";
+
+      const materias = grupo == 4 
+        ? ["Português", "Inglês", "Ciências Humanas", "Ciências da Natureza", "Biologia", "Matemática", "Redação"]
+        : ["Português", "Inglês", "Ciências Humanas", "Ciências da Natureza", "Matemática", "Redação"];
+
+      materias.forEach(mat => {
+        const id = mat.toLowerCase().replace(/ç|ã|é/g, c => ({'ç':'c','ã':'a','é':'e'}[c]));
+        camposDiv.innerHTML += `
+          <label for="${id}">${mat}:</label>
+          <input type="number" id="${id}" min="0" max="100" placeholder="0 a 100">
+        `;
+      });
+    }
+
+    function calcularNota() {
+      const grupo = document.getElementById("grupo").value;
+      const materias = Object.keys(pesos[grupo]);
+      let somaPonderada = 0;
+      let somaPesos = 0;
+
+      materias.forEach(mat => {
+        const valor = parseFloat(document.getElementById(mat).value) || 0;
+        somaPonderada += valor * pesos[grupo][mat];
+        somaPesos += pesos[grupo][mat];
+      });
+
+      const notaFinal = somaPesos > 0 ? somaPonderada / somaPesos : 0;
+      document.getElementById("resultado").innerText = `Nota Final: ${notaFinal.toFixed(2)} / 100`;
+    }
+
+    atualizarCampos(); // inicializa com Grupo 1
+  </script>
+
+</body>
+</html>
